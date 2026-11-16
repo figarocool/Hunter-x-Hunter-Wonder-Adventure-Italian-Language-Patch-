@@ -1,0 +1,6 @@
+*.iso
+*.7z
+*.rar
+*.zip
+patch_ita.bin
+__pycache__/

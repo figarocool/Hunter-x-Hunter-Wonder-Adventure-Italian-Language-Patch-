@@ -1,0 +1,30 @@
+====================================================================
+  HUNTER x HUNTER: WONDER ADVENTURE (PSP) - PATCH ITALIANA v1.0
+====================================================================
+
+Questa patch converte la ISO originale giapponese di Hunter x Hunter:
+Wonder Adventure (NPJH-50624) in una ISO giocabile in italiano,
+compatibile con PS Vita (Adrenaline), PSP e PPSSPP.
+
+CONTENUTO TRADOTTO:
+- Tutti i menu, sottomenu, opzioni, abilita' Nen, missioni e obiettivi
+- Messaggi di sistema, salvataggio, installazione dati e avvisi
+- Tutti gli 89 capitoli della Modalita' Storia ed eventi con terminologia
+  fedele all'anime italiano (Hunter, Esame per Hunter, Nen, Ten/Zetsu/
+  Ren/Hatsu, Jajanken, Jenny, Arena Celeste, Isola Balena, ecc.)
+- Grafiche UI tradotte (Menu Pausa, Game Over, Menu Risultati, Installazione)
+- Menu di uscita PSP/Adrenaline (Si/No) impostato in italiano
+
+COME APPLICARE LA PATCH:
+1. Estrai tutti i file di questo archivio in una cartella.
+2. Copia nella stessa cartella la tua ISO originale giapponese:
+   "pa-hxhwaj.iso" oppure "Hunter x Hunter - Wonder Adventure (Japan).iso"
+   (dimensione esatta: 882.704.384 byte)
+3. Avvia la patch:
+   - Su Windows: doppio click su "applica_patch_ita.bat"
+     (oppure trascina la ISO su applica_patch_ita.bat; richiede Python 3)
+   - Su Linux / macOS: esegui "./applica_patch_ita.sh"
+     (oppure "python3 applica_patch_ita.py percorso/della/iso.iso")
+4. Verra' creata la ISO:
+   "Hunter x Hunter - Wonder Adventure (ITA).iso"
+5. Copia la ISO su PS Vita in "ux0:pspemu/ISO/" e gioca con Adrenaline!
