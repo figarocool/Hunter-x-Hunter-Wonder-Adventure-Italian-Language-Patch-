@@ -359,29 +359,25 @@ def patch_e5_customize(rhg: bytes) -> bytes:
 def patch_e8_story_hdr(rhg: bytes) -> bytes:
     """Translate Story Mode header RHG (Entry 8 sub[2][14])."""
     return _patch_rhg_luma_indices(rhg, 14, [
-        ((20, 5, 230, 24), "MODALITA' STORIA", FONT_SANS_NARROW, (215, 14), 37),
-        ((20, 29, 215, 45), "Modalita' Storia", FONT_SANS_NARROW, (200, 36), 37),
+        ((20, 4, 230, 26), "MODALITA' STORIA", FONT_SANS_NARROW, (215, 14), 37),
+        ((20, 26, 215, 46), "Modalita' Storia", FONT_SANS_NARROW, (200, 36), 37),
     ])
 
 
 def patch_e9_mission_hdr(rhg: bytes, idx: int) -> bytes:
     """Translate Mission Mode header RHG (Entry 9 sub[2][11] and Entry 12 sub[1][19])."""
     return _patch_rhg_luma_indices(rhg, idx, [
-        ((20, 5, 230, 24), "MODALITA' MISSIONE", FONT_SANS_NARROW, (215, 14), 37),
-        ((20, 29, 215, 45), "Modalita' Missione", FONT_SANS_NARROW, (200, 36), 37),
+        ((20, 4, 230, 26), "MODALITA' MISSIONE", FONT_SANS_NARROW, (215, 14), 37),
+        ((20, 26, 215, 46), "Modalita' Missione", FONT_SANS_NARROW, (200, 36), 37),
     ])
 
 
 def patch_e8_chapters(tex_bytes: bytes) -> bytes:
     """Translate CHAPTER 01..08 -> CAPITOLO 01..08 in Entry 8 sub[3][8..15]."""
-    imgs = parse_tex_psp(tex_bytes)
     out = tex_bytes
     for n in range(1, 9):
         idx = 7 + n
-        im = imgs[idx]["image"].copy()
-        d = ImageDraw.Draw(im)
-        # Black bar across [0..200, 0..32]
-        d.rectangle((0, 0, 210, 32), fill=(0, 0, 0, 255))
+        im = Image.new("RGBA", (256, 32), (0, 0, 0, 0))
         render_styled_text(
             im, (6, 2, 204, 30), f"CAPITOLO {n:02d}", FONT_SANS_BOLD,
             (255, 255, 255), (245, 240, 245), (190, 20, 75, 255), align="left"
@@ -392,13 +388,10 @@ def patch_e8_chapters(tex_bytes: bytes) -> bytes:
 
 def patch_e9_locations(tex_bytes: bytes) -> bytes:
     """Translate LOCATION 01..09 -> LUOGO 01..09 in Entry 9 sub[3][9..17]."""
-    imgs = parse_tex_psp(tex_bytes)
     out = tex_bytes
     for n in range(1, 10):
         idx = 8 + n
-        im = imgs[idx]["image"].copy()
-        d = ImageDraw.Draw(im)
-        d.rectangle((0, 0, 210, 32), fill=(0, 0, 0, 255))
+        im = Image.new("RGBA", (256, 32), (0, 0, 0, 0))
         render_styled_text(
             im, (6, 2, 204, 30), f"LUOGO {n:02d}", FONT_SANS_BOLD,
             (255, 255, 255), (245, 240, 245), (190, 20, 75, 255), align="left"
