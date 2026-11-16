@@ -191,23 +191,21 @@ def replace_tex_psp_image(b: bytes, idx: int, new_img: Image.Image) -> bytes:
         out[pix_off : pix_off + len(sw)] = sw
     elif fmt in (4, 5):
         ncolors = 16 if fmt == 4 else 256
-        q = im.quantize(colors=ncolors, method=Image.Quantize.FASTOCTREE)
-        pal_rgb = q.getpalette()[: ncolors * 3]
-        # Preserve transparency via alpha channel matching
+        q = im.convert("RGB").quantize(colors=ncolors - 1, method=Image.Quantize.FASTOCTREE)
+        pal_rgb = q.getpalette()[: (ncolors - 1) * 3]
+        # Reserve index 0 for transparent (0,0,0,0) and store opaque colors at 1..ncolors-1
         pal_rgba = bytearray(ncolors * 4)
-        for ci in range(ncolors):
-            pal_rgba[ci * 4 : ci * 4 + 3] = bytes(pal_rgb[ci * 3 : ci * 3 + 3])
-            pal_rgba[ci * 4 + 3] = 255
-        # Map transparent pixels to index 0
+        for ci in range(ncolors - 1):
+            pal_rgba[(ci + 1) * 4 : (ci + 1) * 4 + 3] = bytes(pal_rgb[ci * 3 : ci * 3 + 3])
+            pal_rgba[(ci + 1) * 4 + 3] = 255
         src_px = im.load()
         q_px = q.load()
         rb = (((w // 2) + 15) & ~15) if fmt == 4 else ((w + 15) & ~15)
         lin = bytearray(rb * h)
-        pal_rgba[3] = 0
         for y in range(h):
             for x in range(w):
                 a = src_px[x, y][3]
-                ci = 0 if a < 32 else max(1, q_px[x, y]) if pal_rgba[3] == 0 else q_px[x, y]
+                ci = 0 if a < 32 else (q_px[x, y] + 1)
                 if fmt == 4:
                     if (x & 1) == 0:
                         lin[y * rb + x // 2] |= (ci & 0x0F)
