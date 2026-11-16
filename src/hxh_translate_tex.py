@@ -225,11 +225,25 @@ def patch_e7_rhg_mainmenu(rhg: bytes) -> bytes:
     out = replace_rhg_image(out, 1, im1)
     out = replace_rhg_image(out, 0, im0)
 
-    # s4[2]: 256x64 "MAIN MENU / メインメニュー" -> exact original palette indices (34=transparent cutout, 55=black bar, 18=white)
+    # s4[2]: 256x64 "MAIN MENU / メインメニュー" -> white top bar (bg=18, fg=55), black bottom bar (bg=55, fg=18)
+    # Clear everything outside the slanted banner parallelogram to idx=0 with alpha=0 so zero dark border remains
     out = _patch_rhg_luma_indices(out, 2, [
-        ((22, 6, 182, 23), "MENU PRINCIPALE", FONT_SANS_NARROW, 34, 18),
+        ((22, 6, 182, 23), "MENU PRINCIPALE", FONT_SANS_NARROW, 18, 55),
         ((22, 26, 176, 38), "Menu Principale", FONT_SANS_NARROW, 55, 18),
     ])
+    d2_info = parse_rhg(out)[2]
+    px2_raw = bytearray(unswizzle_psp(out[d2_info["pix_off"] : d2_info["pix_off"] + d2_info["psz"]], d2_info["rb"], d2_info["height"]))
+    for yy in range(64):
+        x_lim = 197 - int(max(0, yy - 4) * 0.55)
+        for xx in range(256):
+            if yy < 4 or yy > 45 or xx < 3 or xx > x_lim:
+                px2_raw[yy * 256 + xx] = 0
+    sw2 = swizzle_psp(bytes(px2_raw), d2_info["rb"], d2_info["height"])
+    out_ba = bytearray(out)
+    out_ba[d2_info["pix_off"] : d2_info["pix_off"] + len(sw2)] = sw2
+    pal_off_2 = d2_info["pal_off"]
+    out_ba[pal_off_2 + 0 * 4 + 3] = 0
+    out = bytes(out_ba)
 
     assets_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "assets")
 
